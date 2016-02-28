@@ -52,7 +52,7 @@ app.use(function (err, req, res, next) {
 module.exports = app;
 
 
-// router.js using es6 const
+// router.js using es6 const and mongoose
 
 'use strict';
 
@@ -62,53 +62,37 @@ const router = express.Router();
 const mongoose = require('mongoose');
 module.exports = router;
 
+// find array of all items in item
 router.get('/', function (req, res, next) {
-  mongoose.model('Album')
+  mongoose.model('Item')
   .find(req.query)
-  .then(function (albums) {
+  .then(function (item) {
     res.json(albums);
   })
   .then(null, next);
 });
 
-router.param('albumId', function (req, res, next, id) {
-  mongoose.model('Album')
+// retreives the entire item any time itemId is passed as a param
+router.param('itemId', function (req, res, next, id) {
+  mongoose.model('Item')
   .findById(id)
-  .populate('artists songs')
-  .deepPopulate('songs.artists')
-  .then(function (album) {
-    if(!album) throw new Error('not found!');
-    req.album = album;
+  .populate('things that are refrenced')
+  .deepPopulate('refrence.refrences')
+  .then(function (item) {
+    if(!item) throw new Error('not found!');
+    req.item = item;
+    // for all gets with itemId we can use req.item now
     next();
   })
   .then(null, next);
 });
 
-router.get('/:albumId.image', function (req, res, next) {
-  mongoose.model('Album')
-  .findById(req.params.albumId)
-  .select('+cover +coverType')
-  .then(function (album) {
-    if(!album.cover || !album.coverType) return next(new Error('no cover'));
-    res.set('Content-Type', mime.lookup(album.coverType));
-    res.send(album.cover);
-  })
-  .then(null, next);
-});
-
-router.get('/:albumId', function (req, res) {
-  res.json(req.album);
-});
-
-router.get('/:albumId/songs/', function (req, res) {
-  res.json(req.album.songs);
-});
-
-router.get('/:albumId/songs/:songId', function (req, res) {
+// itemId turned to req.item above
+router.get('/:itemId/subitem/:subitemId', function (req, res) {
   var songToSend;
-  req.album.songs.forEach(song => {
-    if (song._id == req.params.songId) songToSend = song;
+  req.item.subitems.forEach(subitem => {
+    if (subitem._id == req.params.subitemId) subitemToSend = subitem;
   });
-  if (!songToSend) throw new Error('not found!');
-  res.json(songToSend);
+  if (!subitemToSend) throw new Error('not found!');
+  res.json(subitemToSend);
 });
