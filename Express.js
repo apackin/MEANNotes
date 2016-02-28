@@ -89,10 +89,10 @@ router.get('/:itemId/subitem/:subitemId', function (req, res) {
 
 // Create
 router.post('/', function (req, res, next) {
-  mongoose.model('Playlist')
+  mongoose.model('Item')
   .create(req.body)
-  .then(function (playlist) {
-    res.status(201).json(playlist);
+  .then(function (item) {
+    res.status(201).json(item);
   })
   .then(null, next);
 });
@@ -109,18 +109,18 @@ router.get('/', function (req, res, next) {
 });
 
 // Update
-router.put('/:playlistId', function (req, res, next) {
-  req.playlist.set(req.body);
-  req.playlist.save()
-  .then(function (playlist) {
-    res.status(200).json(playlist);
+router.put('/:itemId', function (req, res, next) {
+  req.item.set(req.body);
+  req.item.save()
+  .then(function (item) {
+    res.status(200).json(item);
   })
   .then(null, next);
 });
 
 // Delete
-router.delete('/:playlistId', function (req, res, next) {
-  req.playlist.remove()
+router.delete('/:itemId', function (req, res, next) {
+  req.item.remove()
   .then(function () {
     res.status(204).end();
   })
