@@ -57,35 +57,10 @@ module.exports = app;
 'use strict';
 
 const express = require('express');
-const mime = require('mime');
 const router = express.Router();
 const mongoose = require('mongoose');
 module.exports = router;
 
-// retreives the entire item any time itemId is passed as a param
-router.param('itemId', function (req, res, next, id) {
-  mongoose.model('Item')
-  .findById(id)
-  .populate('things that are refrenced')
-  .deepPopulate('refrence.refrences')
-  .then(function (item) {
-    if(!item) throw new Error('not found!');
-    req.item = item;
-    // for all gets with itemId we can use req.item now
-    next();
-  })
-  .then(null, next);
-});
-
-// itemId turned to req.item above
-router.get('/:itemId/subitem/:subitemId', function (req, res) {
-  var songToSend;
-  req.item.subitems.forEach(subitem => {
-    if (subitem._id == req.params.subitemId) subitemToSend = subitem;
-  });
-  if (!subitemToSend) throw new Error('not found!');
-  res.json(subitemToSend);
-});
 
 // Create
 router.post('/', function (req, res, next) {
@@ -108,6 +83,21 @@ router.get('/', function (req, res, next) {
   .then(null, next);
 });
 
+// retreives the entire item any time itemId is passed as a param
+router.param('itemId', function (req, res, next, id) {
+  mongoose.model('Item')
+  .findById(id)
+  .populate('things that are refrenced')
+  .deepPopulate('refrence.refrences')
+  .then(function (item) {
+    if(!item) throw new Error('not found!');
+    req.item = item;
+    // for all gets with itemId we can use req.item now
+    next();
+  })
+  .then(null, next);
+});
+
 // Update
 router.put('/:itemId', function (req, res, next) {
   req.item.set(req.body);
@@ -125,4 +115,14 @@ router.delete('/:itemId', function (req, res, next) {
     res.status(204).end();
   })
   .then(null, next);
+});
+
+// itemId turned to req.item above and populated with subitems
+router.get('/:itemId/subitem/:subitemId', function (req, res) {
+  var songToSend;
+  req.item.subitems.forEach(subitem => {
+    if (subitem._id == req.params.subitemId) subitemToSend = subitem;
+  });
+  if (!subitemToSend) throw new Error('not found!');
+  res.json(subitemToSend);
 });

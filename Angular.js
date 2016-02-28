@@ -85,6 +85,7 @@ app.factory('Factory', function ($http) {
 	 	getById: function(id){
 	 		return $http.get('/api/items/' + id)
 	 		.then(res => res.data);
+	 		// => is ES6!
 	 	},
 	 	delete: function(id){
 	 		return $http.delete('/api/items/' + id)
