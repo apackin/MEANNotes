@@ -62,16 +62,6 @@ const router = express.Router();
 const mongoose = require('mongoose');
 module.exports = router;
 
-// find array of all items in item
-router.get('/', function (req, res, next) {
-  mongoose.model('Item')
-  .find(req.query)
-  .then(function (item) {
-    res.json(albums);
-  })
-  .then(null, next);
-});
-
 // retreives the entire item any time itemId is passed as a param
 router.param('itemId', function (req, res, next, id) {
   mongoose.model('Item')
@@ -95,4 +85,44 @@ router.get('/:itemId/subitem/:subitemId', function (req, res) {
   });
   if (!subitemToSend) throw new Error('not found!');
   res.json(subitemToSend);
+});
+
+// Create
+router.post('/', function (req, res, next) {
+  mongoose.model('Playlist')
+  .create(req.body)
+  .then(function (playlist) {
+    res.status(201).json(playlist);
+  })
+  .then(null, next);
+});
+
+// find array of all items
+// Read
+router.get('/', function (req, res, next) {
+  mongoose.model('Item')
+  .find(req.query)
+  .then(function (item) {
+    res.json(albums);
+  })
+  .then(null, next);
+});
+
+// Update
+router.put('/:playlistId', function (req, res, next) {
+  req.playlist.set(req.body);
+  req.playlist.save()
+  .then(function (playlist) {
+    res.status(200).json(playlist);
+  })
+  .then(null, next);
+});
+
+// Delete
+router.delete('/:playlistId', function (req, res, next) {
+  req.playlist.remove()
+  .then(function () {
+    res.status(204).end();
+  })
+  .then(null, next);
 });
