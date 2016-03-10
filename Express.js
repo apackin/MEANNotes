@@ -34,6 +34,8 @@ app.get('/forbidden', function(req,res){
 // send main index file
 app.get('/*', function (req, res) {
     res.sendFile(app.get('indexHTMLPath'));
+    // This can also be --
+    res.sendFile(__dirname + '/index.html');
 });
 
 // Specific internal server error

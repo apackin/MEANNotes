@@ -1,0 +1,21 @@
+Starting on the *master* branch:
+
+git checkout -b catalog (creates new branch called catalog and switches to it)
+
+Do some work . . .
+
+git add . (stages work for commit, can be more specific than .)
+git commit -m ‘Work done!’ (commits work with message)
+
+Before pushing . . .
+
+git checkout master (switch back to master branch)
+git pull origin master (pull any work that has been placed on remote master [github])
+git checkout catalog (switch back to working branch)
+git merge master (adds work from master to your catalog branch)
+
+Ready to push . . .
+
+git push origin catalog (pushes catalog branch to github as “catalog” branch)
+
+Create pull request!
